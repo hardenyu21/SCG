@@ -1,19 +1,23 @@
+from e2b_code_interpreter import Sandbox, TimeoutException
 
+import os
+os.environ["E2B_API_KEY"] = "e2b_abb5349a7b64ec837ae4dce1b7830e37ee5baa0e"
 
+if __name__ == "__main__":
+    with open("response274_7b.txt", "r") as f:
+        code = f.read()
+    try:
+        with Sandbox() as sandbox:
+            execution = sandbox.run_code(code, timeout=10)
+            result = execution.text
+        
+        # The original logic: check if the output is the string 'True'
+            print(result == 'True')
 
-from hybrid.utils.load import load_dataset_by_name
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from hybrid.generate import generate_code, extract_py_from_output
-from hybrid.utils.config import code_generation_config, generation_system_prompt
-
-dataset = load_dataset_by_name("bigcodebench")
-model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
-tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
-
-for idx, data in enumerate(dataset):
-    if idx == 274:
-        user_content = data['instruct_prompt']
-        response = generate_code(model, tokenizer, generation_system_prompt, user_content, code_generation_config)
-        print(response)
-        print(extract_py_from_output(response))
-        break
+    except TimeoutException:
+        # If sandbox.run_code exceeds its time limit, this block will be executed.
+        # As requested, treat the timeout as a failure (False).
+        print("Timeout")
+        
+    except Exception as e:
+        print(e)

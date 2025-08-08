@@ -25,3 +25,18 @@ print(f"count_pass: {count_pass}")
 print(f"count_secure: {count_secure}")
 print(f"count_pass_secure: {count_pass_secure}")
 print(f'average security score: {accumulation / len(results)}')
+
+meta_results = []
+with jsonlines.open('results/vanilla/qwen25_14b/meta_results.jsonl') as reader:
+    for line in reader:
+        meta_results.append(line)
+null_count = 0
+for idx, meta_result in enumerate(meta_results):
+    if meta_result['CodeOnly'] == '':
+        null_count += 1
+        print(idx)
+    if idx == 1056:
+        print(meta_result)
+        break
+
+print(f"null_count: {null_count}")

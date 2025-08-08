@@ -32,7 +32,7 @@ def task_func(T1, RANGE=100):
 """
 
 code_generation_config = GenerationConfig(
-        max_new_tokens=512,
+        max_new_tokens=1024,
         do_sample=False,
         temperature=None,
         top_p=None,
@@ -56,7 +56,7 @@ Reasoning: <your reasoning>
 """
 
 evaluation_generation_config = GenerationConfig(
-        max_new_tokens=256,
+        max_new_tokens=512,
         do_sample=False,
         temperature=None,
         top_p=None,
