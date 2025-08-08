@@ -214,4 +214,22 @@ def main():
         
 
 if __name__ == "__main__":
-    main()
+    
+    #main()
+    #debug
+    """
+    dataset = load_dataset_by_name("bigcodebench")
+    model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-Coder-7B-Instruct",
+                                                 device_map="auto",
+                                                 torch_dtype="auto")
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-Coder-7B-Instruct")
+    model.to(torch.bfloat16)
+    for idx, data in enumerate(dataset):
+        if idx == 274:
+            user_content = data['instruct_prompt']
+            print(user_content)
+            response = generate_code(model, tokenizer, generation_system_prompt, user_content, code_generation_config)
+            print(response)
+            print(extract_py_from_output(response))
+            break
+    """

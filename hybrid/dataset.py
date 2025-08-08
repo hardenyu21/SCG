@@ -1,6 +1,5 @@
 from datasets import load_dataset
 import json
-import copy
 from utils.load import load_dataset_by_name
 def construct_prompt(data):
 
@@ -44,12 +43,19 @@ if __name__ == "__main__":
 
     original_dataset = load_dataset("Virtue-AI-HUB/SecCodePLT")['insecure_coding']
     bigcodebench = load_dataset_by_name("bigcodebench")
-    for data in original_dataset:
-        new_data = copy.deepcopy(data)
-        new_data['instruct_prompt'], new_data['instruct_prompt_wo_security'] = construct_prompt(data)
-        new_data['canonical_solution'] = construct_ground_truth(data)
-        print(new_data)
-        break
+    print("Start to process SecCodePLTPlus")
+    with open('SecCodePLTPlus.jsonl', 'a') as f:
+        for data in original_dataset:
+            new_data = {}
+            new_data['task_id'] = data['id']
+            new_data['CWE_ID'] = data['CWE_ID']
+            new_data['task_description'] = data['task_description']
+            new_data['install_requirements'] = data['install_requires']
+            new_data['instruct_prompt'], new_data['instruct_prompt_wo_security'] = construct_prompt(data)
+            new_data['canonical_solution'] = construct_ground_truth(data)
+            f.write(json.dumps(new_data) + '\n')
+
+    print("Done!")
 
     # processed_dataset = []
     # select_task = {}
