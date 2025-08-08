@@ -44,7 +44,12 @@ if __name__ == "__main__":
 
     original_dataset = load_dataset("Virtue-AI-HUB/SecCodePLT")['insecure_coding']
     bigcodebench = load_dataset_by_name("bigcodebench")
-    print(bigcodebench)
+    for data in original_dataset:
+        new_data = copy.deepcopy(data)
+        new_data['instruct_prompt'], new_data['instruct_prompt_wo_security'] = construct_prompt(data)
+        new_data['canonical_solution'] = construct_ground_truth(data)
+        print(new_data)
+        break
 
     # processed_dataset = []
     # select_task = {}
