@@ -215,7 +215,7 @@ def main():
 
 if __name__ == "__main__":
     
-    #main()
+    main()
     #debug
     """
     dataset = load_dataset_by_name("bigcodebench")
