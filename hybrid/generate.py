@@ -140,10 +140,10 @@ def generate_security_evaluation(model: AutoModelForCausalLM,
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--code_model_name", type=str, default="Qwen/Qwen2.5-Coder-14B-Instruct")
+    parser.add_argument("--code_model_name", type=str, default="Qwen/Qwen2.5-Coder-7B-Instruct")
     parser.add_argument("--security_model_name", type=str, default="Qwen/Qwen2.5-14B-Instruct")
     parser.add_argument("--dataset_name", type=str, default="bigcodebench")
-    parser.add_argument("--output_dir", type=str, default="results/vanilla")
+    parser.add_argument("--output_dir", type=str, default="results/vanilla/qwen25_7b")
     parser.add_argument("--security_threshold", type=float, default=0.4)
     args = parser.parse_args()
 
@@ -166,7 +166,6 @@ def main():
 
     os.environ["E2B_API_KEY"] = e2b_api_key
     for idx, data in tqdm(enumerate(dataset), total=len(dataset)):
-
         user_content = data['instruct_prompt']
         response = generate_code(code_model, code_model_tokenizer, generation_system_prompt,
                                   user_content, code_generation_config)

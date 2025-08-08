@@ -48,7 +48,7 @@ The input format is given in the following example:
 <bandit_report>
 Note1: The bandit report is just for reference, since it only analyze the python code itself but do not consider the environment of usage.
 Note2: When you assess the security issue, you should regard the task description as the environment of usage.
-Your output MUST strictly be in the following JSON-like format and nothing else:
+Your output MUST strictly be in the following plain text format (NOT JSON) and nothing else:
 Secure: <boolean>
 Severity: <range from 0 to 1>
 Confidence: <range from 0 to 1>
