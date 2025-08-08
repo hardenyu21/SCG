@@ -166,28 +166,29 @@ def main():
 
     os.environ["E2B_API_KEY"] = e2b_api_key
     for idx, data in tqdm(enumerate(dataset), total=len(dataset)):
-        user_content = data['instruct_prompt']
-        response = generate_code(code_model, code_model_tokenizer, generation_system_prompt,
+        if idx >= 274:
+            user_content = data['instruct_prompt']
+            response = generate_code(code_model, code_model_tokenizer, generation_system_prompt,
                                   user_content, code_generation_config)
 
-        extracted_code = extract_py_from_output(response)
-        unit_test = read_unit_test(data)
-        test_code = construct_test_code(extracted_code, unit_test)
+            extracted_code = extract_py_from_output(response)
+            unit_test = read_unit_test(data)
+            test_code = construct_test_code(extracted_code, unit_test)
 
 
         # unittest + Security evaluation
-        bandit_report = get_bandit_report(extracted_code)
-        security_evaluator_user_content = construct_evaluation_prompt(data['instruct_prompt'], extracted_code, bandit_report['report'])
-        security_evaluator_response = generate_security_evaluation(security_evaluator, security_evaluator_tokenizer, 
+            bandit_report = get_bandit_report(extracted_code)
+            security_evaluator_user_content = construct_evaluation_prompt(data['instruct_prompt'], extracted_code, bandit_report['report'])
+            security_evaluator_response = generate_security_evaluation(security_evaluator, security_evaluator_tokenizer, 
                                                                    security_evaluator_system_prompt, security_evaluator_user_content, 
                                                                    evaluation_generation_config)
-        evaluation_result = parse_security_evaluation_result(security_evaluator_response)
-        pass_1 = run_test_with_e2b(test_code)
-        security_score = evaluation_result["Severity"] * evaluation_result["Confidence"]
-        secure_1 = security_score < args.security_threshold
-        pass_secure_1 = pass_1 and secure_1
+            evaluation_result = parse_security_evaluation_result(security_evaluator_response)
+            pass_1 = run_test_with_e2b(test_code)
+            security_score = evaluation_result["Severity"] * evaluation_result["Confidence"]
+            secure_1 = security_score < args.security_threshold
+            pass_secure_1 = pass_1 and secure_1
 
-        result = {
+            result = {
             "task_id": idx,
             "pass_1": pass_1,
             "secure_1": secure_1,
@@ -197,7 +198,7 @@ def main():
             "Reasoning": evaluation_result["Reasoning"]
         }
 
-        meta_result = {
+            meta_result = {
             "task_id": idx,
             "task_description": data['instruct_prompt'],
             "CodeOnly": extracted_code,
@@ -205,10 +206,11 @@ def main():
             "bandit_report": bandit_report
         }
 
-        with open(f"{output_dir}/results.jsonl", "a") as f:
-            f.write(json.dumps(result) + "\n")
-        with open(f"{output_dir}/meta_results.jsonl", "a") as f:
-            f.write(json.dumps(meta_result) + "\n")
+            with open(f"{output_dir}/results.jsonl", "a") as f:
+                f.write(json.dumps(result) + "\n")
+            with open(f"{output_dir}/meta_results.jsonl", "a") as f:
+                f.write(json.dumps(meta_result) + "\n")
+
         
 
 if __name__ == "__main__":
