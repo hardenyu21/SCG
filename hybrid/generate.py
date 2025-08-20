@@ -5,7 +5,7 @@ import subprocess
 import sys
 import json
 from tqdm import tqdm
-from utils.load import load_dataset_by_name, load_model
+from utils.load import load_dataset_by_name, load_model, load_lora_model_from_path
 from utils.extract import extract_py_from_output, read_unit_test, \
                             construct_test_code, save_code_to_file, \
                             construct_evaluation_prompt, parse_security_evaluation_result
@@ -42,6 +42,7 @@ def generate_code(model: AutoModelForCausalLM,
     output = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
     
     return output
+
 
 def get_bandit_report(generated_code: str, timeout: int = 30) -> dict:
     """
@@ -152,7 +153,8 @@ def generate_security_evaluation(model: AutoModelForCausalLM,
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--code_model_name", type=str, default="Qwen/Qwen2.5-Coder-7B-Instruct")
+    parser.add_argument("--code_model_name", type=str, default="Qwen/Qwen2.5-Coder-3B-Instruct")
+    parser.add_argument("--code_model_path", type=str, default="")
     parser.add_argument("--security_model_name", type=str, default="Qwen/Qwen2.5-14B-Instruct")
     parser.add_argument("--dataset_name", type=str, default="bigcodebench")
     parser.add_argument("--output_dir", type=str, default="results/vanilla/qwen25_7b")
@@ -173,14 +175,21 @@ def main():
         json.dump(experiment_setting, f, indent=4)
 
     dataset = load_dataset_by_name(args.dataset_name)
-    code_model, code_model_tokenizer = load_model(args.code_model_name)
+    if args.code_model_path:    
+        code_model, code_model_tokenizer = load_lora_model_from_path(args.code_model_name, args.code_model_path)
+    else:
+        code_model, code_model_tokenizer = load_model(args.code_model_name)
     security_evaluator, security_evaluator_tokenizer = load_model(args.security_model_name, dtype=torch.bfloat16)
 
     os.environ["E2B_API_KEY"] = e2b_api_key
     for idx, data in tqdm(enumerate(dataset), total=len(dataset)):
         user_content = data['instruct_prompt']
-        response = generate_code(code_model, code_model_tokenizer, generation_system_prompt,
-                                  user_content, code_generation_config)
+        if "deepseek" in args.code_model_name:
+            response = generate_code(code_model, code_model_tokenizer, generation_system_prompt,
+                                              user_content, code_generation_config)
+        else:
+            response = generate_code(code_model, code_model_tokenizer, generation_system_prompt,
+                                      user_content, code_generation_config)
 
         extracted_code = extract_py_from_output(response)
         unit_test = read_unit_test(data)

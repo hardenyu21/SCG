@@ -1,0 +1,7 @@
+{
+    "code_model_name": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "security_model_name": "Qwen/Qwen2.5-14B-Instruct",
+    "dataset_name": "bigcodebench",
+    "output_dir": "results/safecoder2/qwen25_7b_safecoder",
+    "security_threshold": 0.4
+}
