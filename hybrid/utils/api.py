@@ -1,3 +1,6 @@
 
 #e2b_api_key = "Your E2B API key"
-e2b_api_key = ""
+e2b_api_key = "e2b_abb5349a7b64ec837ae4dce1b7830e37ee5baa0e"
+deepseek_api_key_1 = "e7c6ed0e63b74d5ba5974fa2fd164a22e86955cdb3ce45fa8b1ec88447d9fbd1"
+deepseek_api_key_2 = "7c182970c3c04eeaaee6e509369616b2eaa004e186ee4a2ab3a04ae0900262e9"
+deepseek_api_key_3 = "6cc0e985ed884aaa82ecf805ad961658fa6ebdd6a16548f9938c04378ae7c3db"
